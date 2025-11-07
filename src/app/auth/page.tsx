@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { gsap } from 'gsap';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +13,15 @@ export default function AuthPage() {
   });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    gsap.from('.auth-card', {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      ease: 'power3.out',
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,50 +51,60 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white/10 backdrop-blur-md rounded-lg p-8 border border-white/20">
-        <h1 className="text-3xl font-bold text-white mb-6 text-center">
-          {isLogin ? 'Login' : 'Register'} to RAGster
-        </h1>
+    <div className="min-h-screen bg-black flex items-center justify-center px-4 pt-24 pb-16">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="auth-card relative max-w-md w-full glass rounded-3xl p-10 border border-white/10 shadow-2xl">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-2">
+            <span className="gradient-accent">{isLogin ? 'Welcome Back' : 'Join RAGster'}</span>
+          </h1>
+          <p className="text-gray-400">
+            {isLogin ? 'Login to access your RAG platform' : 'Create your custom RAG platform'}
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           {!isLogin && (
             <div>
-              <label className="block text-gray-300 mb-2">Name</label>
+              <label className="block text-gray-300 mb-2 font-medium text-sm">Full Name</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required={!isLogin}
-                className="w-full bg-black/30 border border-white/20 rounded px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all"
                 placeholder="John Doe"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-gray-300 mb-2">Email</label>
+            <label className="block text-gray-300 mb-2 font-medium text-sm">Email Address</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full bg-black/30 border border-white/20 rounded px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-gray-300 mb-2">Password</label>
+            <label className="block text-gray-300 mb-2 font-medium text-sm">Password</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full bg-black/30 border border-white/20 rounded px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all"
               placeholder="••••••••"
             />
           </div>
@@ -92,26 +112,43 @@ export default function AuthPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-colors"
+            className="w-full bg-white text-black py-4 rounded-full font-bold text-lg hover:bg-gray-200 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-2xl"
           >
-            {loading ? 'Processing...' : (isLogin ? 'Login' : 'Register')}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="inline-block w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></span>
+                Processing...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                {isLogin ? 'Login' : 'Create Account'}
+                <span>→</span>
+              </span>
+            )}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-8 text-center">
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-purple-400 hover:text-purple-300 transition-colors"
+            className="text-gray-400 hover:text-white transition-colors text-sm"
           >
-            {isLogin ? "Don't have an account? Register" : 'Already have an account? Login'}
+            {isLogin ? (
+              <span>Don't have an account? <span className="font-semibold underline">Register</span></span>
+            ) : (
+              <span>Already have an account? <span className="font-semibold underline">Login</span></span>
+            )}
           </button>
         </div>
 
         {!isLogin && (
-          <div className="mt-6 p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg">
-            <p className="text-sm text-blue-200">
-              🔑 After registration, you'll receive a unique <strong>user_id</strong> and <strong>api_key</strong> to access your RAG platform!
-            </p>
+          <div className="mt-6 p-4 glass border border-white/20 rounded-2xl">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">🔑</span>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                After registration, you'll receive a unique <code className="bg-white/10 px-2 py-1 rounded text-white font-mono text-xs">user_id</code> and <code className="bg-white/10 px-2 py-1 rounded text-white font-mono text-xs">api_key</code> to access your RAG platform!
+              </p>
+            </div>
           </div>
         )}
       </div>
